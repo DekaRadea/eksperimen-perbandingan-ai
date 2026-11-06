@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pengumuman Kampus</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background: #f1f5f9;
+        color: #1e293b;
+        min-height: 100vh;
+      }
+
+      header {
+        background: #1e3a8a;
+        color: white;
+        padding: 20px;
+      }
+
+      .header-content {
+        max-width: 1100px;
+        margin: auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+      }
+
+      header h1 {
+        font-size: 23px;
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 35px auto;
+        padding: 0 20px;
+      }
+
+      .card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.07);
+        margin-bottom: 22px;
+      }
+
+      .auth-container {
+        max-width: 430px;
+        margin: 65px auto;
+        padding: 20px;
+      }
+
+      h2 {
+        margin-bottom: 20px;
+        color: #1e3a8a;
+      }
+
+      h3 {
+        margin-bottom: 12px;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        margin-bottom: 15px;
+        font-size: 14px;
+        font-family: inherit;
+      }
+
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
+
+      button {
+        padding: 11px 17px;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        transition: 0.2s;
+      }
+
+      button:hover {
+        opacity: 0.85;
+      }
+
+      .btn-primary {
+        background: #2563eb;
+        color: white;
+      }
+
+      .btn-danger {
+        background: #dc2626;
+        color: white;
+      }
+
+      .btn-secondary {
+        background: #475569;
+        color: white;
+      }
+
+      .btn-logout {
+        background: #ef4444;
+        color: white;
+      }
+
+      .btn-full {
+        width: 100%;
+      }
+
+      .auth-link {
+        margin-top: 18px;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      .auth-link a {
+        color: #2563eb;
+        cursor: pointer;
+        font-weight: bold;
+        text-decoration: none;
+      }
+
+      .message {
+        margin-bottom: 15px;
+        padding: 12px;
+        border-radius: 7px;
+        display: none;
+        font-size: 14px;
+      }
+
+      .success {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .error {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .welcome {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .role {
+        display: inline-block;
+        background: #dbeafe;
+        color: #1d4ed8;
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+        margin-top: 7px;
+      }
+
+      .announcement {
+        border: 1px solid #e2e8f0;
+        border-left: 5px solid #2563eb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 16px;
+      }
+
+      .announcement h3 {
+        color: #1e3a8a;
+        overflow-wrap: anywhere;
+      }
+
+      .announcement p {
+        line-height: 1.7;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        margin: 12px 0;
+      }
+
+      .announcement small {
+        color: #64748b;
+        display: block;
+        margin-bottom: 12px;
+      }
+
+      .empty {
+        text-align: center;
+        padding: 35px;
+        color: #64748b;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      footer {
+        text-align: center;
+        padding: 25px;
+        color: #64748b;
+        font-size: 13px;
+      }
+
+      @media (max-width: 600px) {
+        .header-content {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        header h1 {
+          font-size: 20px;
+        }
+
+        .container {
+          margin-top: 20px;
+          padding: 0 12px;
+        }
+
+        .card {
+          padding: 18px;
+        }
+
+        .auth-container {
+          margin-top: 35px;
+        }
+
+        .welcome {
+          align-items: flex-start;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div class="header-content">
+        <h1>🎓 Pengumuman Kampus</h1>
+        <span id="headerInfo">Portal Informasi Akademik</span>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- LOGIN -->
+      <section id="loginPage" class="auth-container">
+        <div class="card">
+          <h2>Login Akun</h2>
+
+          <div id="loginMessage" class="message"></div>
+
+          <form id="loginForm">
+            <input
+              type="email"
+              id="loginEmail"
+              placeholder="Email"
+              autocomplete="email"
+              required
+            />
+
+            <input
+              type="password"
+              id="loginPassword"
+              placeholder="Password"
+              autocomplete="current-password"
+              required
+            />
+
+            <button class="btn-primary btn-full" type="submit">Login</button>
+          </form>
+
+          <div class="auth-link">
+            Belum punya akun?
+            <a onclick="showRegister()">Registrasi</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- REGISTER -->
+      <section id="registerPage" class="auth-container hidden">
+        <div class="card">
+          <h2>Registrasi Akun</h2>
+
+          <div id="registerMessage" class="message"></div>
+
+          <form id="registerForm">
+            <input
+              type="text"
+              id="registerName"
+              placeholder="Nama lengkap"
+              maxlength="100"
+              autocomplete="name"
+              required
+            />
+
+            <input
+              type="email"
+              id="registerEmail"
+              placeholder="Email"
+              autocomplete="email"
+              required
+            />
+
+            <input
+              type="password"
+              id="registerPassword"
+              placeholder="Password minimal 8 karakter"
+              minlength="8"
+              autocomplete="new-password"
+              required
+            />
+
+            <button class="btn-primary btn-full" type="submit">
+              Daftar Sekarang
+            </button>
+          </form>
+
+          <div class="auth-link">
+            Sudah punya akun?
+            <a onclick="showLogin()">Login</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- DASHBOARD -->
+      <section id="dashboardPage" class="hidden">
+        <div class="card welcome">
+          <div>
+            <h2 style="margin-bottom: 5px">Selamat Datang!</h2>
+
+            <div id="userName"></div>
+
+            <span id="userRole" class="role"></span>
+          </div>
+
+          <button class="btn-logout" onclick="logout()">Logout</button>
+        </div>
+
+        <!-- FORM ADMIN -->
+        <section id="adminPanel" class="card hidden">
+          <h2>Kelola Pengumuman</h2>
+
+          <div id="adminMessage" class="message"></div>
+
+          <form id="announcementForm">
+            <input
+              type="text"
+              id="announcementTitle"
+              placeholder="Judul pengumuman"
+              maxlength="200"
+              required
+            />
+
+            <textarea
+              id="announcementContent"
+              placeholder="Isi pengumuman..."
+              required
+            ></textarea>
+
+            <button type="submit" class="btn-primary">
+              + Tambah Pengumuman
+            </button>
+          </form>
+        </section>
+
+        <!-- DAFTAR PENGUMUMAN -->
+        <section class="card">
+          <h2>📢 Daftar Pengumuman Kampus</h2>
+
+          <div id="announcementList">
+            <div class="empty">Memuat pengumuman...</div>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <footer>&copy; 2026 Pengumuman Kampus. Semua Hak Dilindungi.</footer>
+
+    <script>
+      const loginPage = document.getElementById('loginPage');
+      const registerPage = document.getElementById('registerPage');
+      const dashboardPage = document.getElementById('dashboardPage');
+
+      const adminPanel = document.getElementById('adminPanel');
+      const announcementList = document.getElementById('announcementList');
+
+      let currentUser = null;
+
+      // Helper request API
+      async function api(url, options = {}) {
+        const response = await fetch(url, {
+          ...options,
+          headers: {
+            'Content-Type': 'application/json',
+            ...(options.headers || {}),
+          },
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message || 'Terjadi kesalahan.');
+        }
+
+        return data;
+      }
+
+      // Menampilkan pesan
+      function showMessage(elementId, message, type = 'success') {
+        const element = document.getElementById(elementId);
+
+        element.textContent = message;
+        element.className = 'message ' + type;
+        element.style.display = 'block';
+      }
+
+      // Menyembunyikan pesan
+      function hideMessage(elementId) {
+        const element = document.getElementById(elementId);
+        element.style.display = 'none';
+      }
+
+      function showLogin() {
+        loginPage.classList.remove('hidden');
+        registerPage.classList.add('hidden');
+        dashboardPage.classList.add('hidden');
+        hideMessage('loginMessage');
+      }
+
+      function showRegister() {
+        loginPage.classList.add('hidden');
+        registerPage.classList.remove('hidden');
+        dashboardPage.classList.add('hidden');
+        hideMessage('registerMessage');
+      }
+
+      function showDashboard() {
+        loginPage.classList.add('hidden');
+        registerPage.classList.add('hidden');
+        dashboardPage.classList.remove('hidden');
+
+        document.getElementById('userName').textContent =
+          currentUser.name + ' (' + currentUser.email + ')';
+
+        document.getElementById('userRole').textContent =
+          currentUser.role.toUpperCase();
+
+        // Fitur admin hanya muncul untuk role admin
+        if (currentUser.role === 'admin') {
+          adminPanel.classList.remove('hidden');
+        } else {
+          adminPanel.classList.add('hidden');
+        }
+
+        document.getElementById('headerInfo').textContent =
+          'Portal Informasi Akademik';
+      }
+
+      // Registrasi
+      document
+        .getElementById('registerForm')
+        .addEventListener('submit', async (event) => {
+          event.preventDefault();
+
+          hideMessage('registerMessage');
+
+          const name = document.getElementById('registerName').value;
+          const email = document.getElementById('registerEmail').value;
+          const password = document.getElementById('registerPassword').value;
+
+          try {
+            const result = await api('/api/register', {
+              method: 'POST',
+              body: JSON.stringify({
+                name,
+                email,
+                password,
+              }),
+            });
+
+            showLogin();
+
+            showMessage('loginMessage', result.message, 'success');
+
+            document.getElementById('registerForm').reset();
+          } catch (error) {
+            showMessage('registerMessage', error.message, 'error');
+          }
+        });
+
+      // Login
+      document
+        .getElementById('loginForm')
+        .addEventListener('submit', async (event) => {
+          event.preventDefault();
+
+          hideMessage('loginMessage');
+
+          const email = document.getElementById('loginEmail').value;
+          const password = document.getElementById('loginPassword').value;
+
+          try {
+            const result = await api('/api/login', {
+              method: 'POST',
+              body: JSON.stringify({
+                email,
+                password,
+              }),
+            });
+
+            currentUser = result.user;
+
+            document.getElementById('loginForm').reset();
+
+            showDashboard();
+
+            await loadAnnouncements();
+          } catch (error) {
+            showMessage('loginMessage', error.message, 'error');
+          }
+        });
+
+      // Logout
+      async function logout() {
+        try {
+          await api('/api/logout', {
+            method: 'POST',
+          });
+
+          currentUser = null;
+
+          showLogin();
+
+          document.getElementById('loginForm').reset();
+        } catch (error) {
+          alert(error.message);
+        }
+      }
+
+      // Tambah pengumuman
+      document
+        .getElementById('announcementForm')
+        .addEventListener('submit', async (event) => {
+          event.preventDefault();
+
+          hideMessage('adminMessage');
+
+          const title = document.getElementById('announcementTitle').value;
+          const content = document.getElementById('announcementContent').value;
+
+          try {
+            const result = await api('/api/announcements', {
+              method: 'POST',
+              body: JSON.stringify({
+                title,
+                content,
+              }),
+            });
+
+            document.getElementById('announcementForm').reset();
+
+            showMessage('adminMessage', result.message, 'success');
+
+            await loadAnnouncements();
+          } catch (error) {
+            showMessage('adminMessage', error.message, 'error');
+          }
+        });
+
+      // Memuat daftar pengumuman
+      async function loadAnnouncements() {
+        try {
+          const announcements = await api('/api/announcements');
+
+          announcementList.replaceChildren();
+
+          if (announcements.length === 0) {
+            const empty = document.createElement('div');
+            empty.className = 'empty';
+            empty.textContent = 'Belum ada pengumuman kampus.';
+            announcementList.appendChild(empty);
+            return;
+          }
+
+          announcements.forEach((item) => {
+            const card = document.createElement('article');
+            card.className = 'announcement';
+
+            const title = document.createElement('h3');
+            title.textContent = item.title;
+
+            const date = document.createElement('small');
+            date.textContent =
+              'Tanggal: ' + new Date(item.created_at).toLocaleString('id-ID');
+
+            const content = document.createElement('p');
+            content.textContent = item.content;
+
+            card.appendChild(title);
+            card.appendChild(date);
+            card.appendChild(content);
+
+            // Tombol hapus hanya ditampilkan untuk admin
+            if (currentUser && currentUser.role === 'admin') {
+              const deleteButton = document.createElement('button');
+
+              deleteButton.className = 'btn-danger';
+              deleteButton.textContent = 'Hapus';
+
+              deleteButton.addEventListener('click', () => {
+                deleteAnnouncement(item.id);
+              });
+
+              card.appendChild(deleteButton);
+            }
+
+            announcementList.appendChild(card);
+          });
+        } catch (error) {
+          announcementList.textContent = error.message;
+        }
+      }
+
+      // Hapus pengumuman
+      async function deleteAnnouncement(id) {
+        const confirmed = confirm(
+          'Apakah Anda yakin ingin menghapus pengumuman ini?'
+        );
+
+        if (!confirmed) return;
+
+        try {
+          const result = await api('/api/announcements/' + id, {
+            method: 'DELETE',
+          });
+
+          showMessage('adminMessage', result.message, 'success');
+
+          await loadAnnouncements();
+        } catch (error) {
+          showMessage('adminMessage', error.message, 'error');
+        }
+      }
+
+      // Periksa session ketika halaman dibuka atau di-refresh
+      async function checkSession() {
+        try {
+          const result = await api('/api/me');
+
+          if (result.user) {
+            currentUser = result.user;
+            showDashboard();
+            await loadAnnouncements();
+          } else {
+            currentUser = null;
+            showLogin();
+          }
+        } catch (error) {
+          currentUser = null;
+          showLogin();
+        }
+      }
+
+      // Jalankan aplikasi
+      checkSession();
+    </script>
+  </body>
+</html>
