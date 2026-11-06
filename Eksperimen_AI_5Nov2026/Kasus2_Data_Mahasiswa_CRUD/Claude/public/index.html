@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Mahasiswa</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: system-ui, Arial, sans-serif;
+        background: #f4f6f9;
+        margin: 0;
+        padding: 24px;
+        color: #222;
+      }
+      .container {
+        max-width: 860px;
+        margin: 0 auto;
+      }
+      h1 {
+        margin-top: 0;
+      }
+      .card {
+        background: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+        margin-bottom: 20px;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin: 10px 0 4px;
+      }
+      input {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 14px;
+      }
+      input.invalid {
+        border-color: #d33;
+      }
+      .buttons {
+        margin-top: 14px;
+        display: flex;
+        gap: 8px;
+      }
+      button {
+        padding: 8px 14px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+      .btn-primary {
+        background: #2563eb;
+        color: #fff;
+      }
+      .btn-secondary {
+        background: #e5e7eb;
+      }
+      .btn-edit {
+        background: #f59e0b;
+        color: #fff;
+      }
+      .btn-delete {
+        background: #dc2626;
+        color: #fff;
+      }
+      .message {
+        padding: 10px;
+        border-radius: 6px;
+        margin-top: 12px;
+        display: none;
+      }
+      .message.error {
+        display: block;
+        background: #fde2e2;
+        color: #9b1c1c;
+      }
+      .message.success {
+        display: block;
+        background: #dcfce7;
+        color: #166534;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        padding: 10px;
+        border-bottom: 1px solid #e5e7eb;
+        text-align: left;
+      }
+      th {
+        background: #f9fafb;
+      }
+      td.aksi {
+        white-space: nowrap;
+      }
+      td.aksi button {
+        padding: 5px 10px;
+        margin-right: 4px;
+      }
+      .empty {
+        text-align: center;
+        color: #777;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Data Mahasiswa</h1>
+
+      <div class="card">
+        <h2 id="formTitle">Tambah Mahasiswa</h2>
+        <form id="form" novalidate>
+          <input type="hidden" id="id" />
+          <label for="nim">NIM</label>
+          <input type="text" id="nim" placeholder="contoh: 2401234" />
+          <label for="nama">Nama</label>
+          <input type="text" id="nama" placeholder="Nama lengkap" />
+          <label for="prodi">Prodi</label>
+          <input type="text" id="prodi" placeholder="contoh: Teknik Komputer" />
+          <div class="buttons">
+            <button type="submit" class="btn-primary" id="btnSubmit">
+              Simpan
+            </button>
+            <button
+              type="button"
+              class="btn-secondary"
+              id="btnBatal"
+              style="display: none"
+            >
+              Batal
+            </button>
+          </div>
+          <div id="message" class="message"></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Daftar Mahasiswa</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>NIM</th>
+              <th>Nama</th>
+              <th>Prodi</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      const API = '/api/mahasiswa';
+      const form = document.getElementById('form');
+      const fId = document.getElementById('id');
+      const fNim = document.getElementById('nim');
+      const fNama = document.getElementById('nama');
+      const fProdi = document.getElementById('prodi');
+      const btnSubmit = document.getElementById('btnSubmit');
+      const btnBatal = document.getElementById('btnBatal');
+      const formTitle = document.getElementById('formTitle');
+      const msg = document.getElementById('message');
+      const tbody = document.getElementById('tbody');
+
+      let dataMahasiswa = [];
+
+      function escapeHtml(s) {
+        return String(s).replace(
+          /[&<>"']/g,
+          (c) =>
+            ({
+              '&': '&amp;',
+              '<': '&lt;',
+              '>': '&gt;',
+              '"': '&quot;',
+              "'": '&#39;',
+            }[c])
+        );
+      }
+
+      function showMessage(text, type) {
+        msg.textContent = text;
+        msg.className = 'message ' + type;
+      }
+
+      function clearMessage() {
+        msg.textContent = '';
+        msg.className = 'message';
+      }
+
+      function resetForm() {
+        form.reset();
+        fId.value = '';
+        formTitle.textContent = 'Tambah Mahasiswa';
+        btnSubmit.textContent = 'Simpan';
+        btnBatal.style.display = 'none';
+        [fNim, fNama, fProdi].forEach((el) => el.classList.remove('invalid'));
+      }
+
+      // Tampilkan data dalam tabel
+      function renderTable() {
+        if (dataMahasiswa.length === 0) {
+          tbody.innerHTML =
+            '<tr><td colspan="5" class="empty">Belum ada data.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = dataMahasiswa
+          .map(
+            (m, i) => `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${escapeHtml(m.nim)}</td>
+          <td>${escapeHtml(m.nama)}</td>
+          <td>${escapeHtml(m.prodi)}</td>
+          <td class="aksi">
+            <button class="btn-edit" data-id="${
+              m.id
+            }" data-action="edit">Edit</button>
+            <button class="btn-delete" data-id="${
+              m.id
+            }" data-action="hapus">Hapus</button>
+          </td>
+        </tr>`
+          )
+          .join('');
+      }
+
+      async function loadData() {
+        try {
+          const res = await fetch(API);
+          dataMahasiswa = await res.json();
+          renderTable();
+        } catch {
+          showMessage('Gagal memuat data dari server.', 'error');
+        }
+      }
+
+      // Validasi di sisi klien
+      function validateForm() {
+        const fields = [
+          [fNim, 'NIM'],
+          [fNama, 'Nama'],
+          [fProdi, 'Prodi'],
+        ];
+        const errors = [];
+        fields.forEach(([el, label]) => {
+          if (!el.value.trim()) {
+            el.classList.add('invalid');
+            errors.push(label + ' wajib diisi.');
+          } else {
+            el.classList.remove('invalid');
+          }
+        });
+
+        const nim = fNim.value.trim();
+        const editId = Number(fId.value);
+        if (
+          nim &&
+          dataMahasiswa.some((m) => m.nim === nim && m.id !== editId)
+        ) {
+          fNim.classList.add('invalid');
+          errors.push('NIM ' + nim + ' sudah terdaftar.');
+        }
+        return errors;
+      }
+
+      // Tambah / edit data
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearMessage();
+
+        const errors = validateForm();
+        if (errors.length) {
+          showMessage(errors.join(' '), 'error');
+          return;
+        }
+
+        const payload = {
+          nim: fNim.value.trim(),
+          nama: fNama.value.trim(),
+          prodi: fProdi.value.trim(),
+        };
+        const isEdit = fId.value !== '';
+        const url = isEdit ? `${API}/${fId.value}` : API;
+
+        try {
+          const res = await fetch(url, {
+            method: isEdit ? 'PUT' : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          const result = await res.json();
+          if (!res.ok) {
+            showMessage(result.message || 'Terjadi kesalahan.', 'error');
+            return;
+          }
+          resetForm();
+          showMessage(
+            isEdit ? 'Data berhasil diperbarui.' : 'Data berhasil ditambahkan.',
+            'success'
+          );
+          loadData();
+        } catch {
+          showMessage('Tidak dapat terhubung ke server.', 'error');
+        }
+      });
+
+      btnBatal.addEventListener('click', () => {
+        resetForm();
+        clearMessage();
+      });
+
+      // Tombol edit dan hapus pada tabel
+      tbody.addEventListener('click', async (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        const id = Number(btn.dataset.id);
+        const m = dataMahasiswa.find((x) => x.id === id);
+        if (!m) return;
+
+        if (btn.dataset.action === 'edit') {
+          fId.value = m.id;
+          fNim.value = m.nim;
+          fNama.value = m.nama;
+          fProdi.value = m.prodi;
+          formTitle.textContent = 'Edit Mahasiswa';
+          btnSubmit.textContent = 'Perbarui';
+          btnBatal.style.display = 'inline-block';
+          clearMessage();
+          fNim.focus();
+        }
+
+        if (btn.dataset.action === 'hapus') {
+          if (!confirm(`Hapus data ${m.nama} (${m.nim})?`)) return;
+          try {
+            const res = await fetch(`${API}/${id}`, { method: 'DELETE' });
+            const result = await res.json();
+            if (!res.ok) {
+              showMessage(result.message || 'Gagal menghapus data.', 'error');
+              return;
+            }
+            if (Number(fId.value) === id) resetForm();
+            showMessage('Data berhasil dihapus.', 'success');
+            loadData();
+          } catch {
+            showMessage('Tidak dapat terhubung ke server.', 'error');
+          }
+        }
+      });
+
+      loadData();
+    </script>
+  </body>
+</html>
