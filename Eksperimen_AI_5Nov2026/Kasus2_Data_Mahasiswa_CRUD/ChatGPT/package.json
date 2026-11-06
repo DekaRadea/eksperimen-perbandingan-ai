@@ -1,0 +1,13 @@
+{
+  "name": "aplikasi-data-mahasiswa",
+  "version": "1.0.0",
+  "description": "Aplikasi CRUD Data Mahasiswa menggunakan Express dan SQLite",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "sql.js": "^1.13.0"
+  }
+}
