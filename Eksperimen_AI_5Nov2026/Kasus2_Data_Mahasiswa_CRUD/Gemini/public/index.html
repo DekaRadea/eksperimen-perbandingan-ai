@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aplikasi Data Mahasiswa</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 0 20px;
+      }
+      .card {
+        border: 1px solid #ccc;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      input {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+      }
+      button {
+        padding: 10px 15px;
+        cursor: pointer;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 4px;
+      }
+      button.btn-danger {
+        background-color: #dc3545;
+        padding: 5px 10px;
+      }
+      button.btn-warning {
+        background-color: #ffc107;
+        padding: 5px 10px;
+        color: #000;
+        margin-right: 5px;
+      }
+      button.btn-secondary {
+        background-color: #6c757d;
+        display: none;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: left;
+      }
+      th {
+        background-color: #f4f4f4;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Data Mahasiswa</h2>
+
+    <div class="card">
+      <form id="formMahasiswa">
+        <div class="form-group">
+          <label>NIM</label>
+          <input type="text" id="nim" placeholder="Masukkan NIM" required />
+        </div>
+        <div class="form-group">
+          <label>Nama Mahasiswa</label>
+          <input type="text" id="nama" placeholder="Masukkan Nama" required />
+        </div>
+        <div class="form-group">
+          <label>Program Studi</label>
+          <input
+            type="text"
+            id="prodi"
+            placeholder="Masukkan Program Studi"
+            required
+          />
+        </div>
+        <button type="submit" id="btnSimpan">Simpan Data</button>
+        <button
+          type="button"
+          id="btnBatal"
+          class="btn-secondary"
+          onclick="resetForm()"
+        >
+          Batal Edit
+        </button>
+      </form>
+    </div>
+
+    <div class="card">
+      <table>
+        <thead>
+          <tr>
+            <th>NIM</th>
+            <th>Nama</th>
+            <th>Program Studi</th>
+            <th width="150">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tabelBody">
+          <!-- Data dari API akan dimuat ke sini -->
+        </tbody>
+      </table>
+    </div>
+
+    <script>
+      let isEdit = false;
+
+      // Load data saat pertama kali dibuka
+      document.addEventListener('DOMContentLoaded', loadData);
+
+      // Ambil Data dari API
+      async function loadData() {
+        try {
+          const response = await fetch('/api/mahasiswa');
+          const data = await response.json();
+
+          const tbody = document.getElementById('tabelBody');
+          tbody.innerHTML = '';
+
+          data.forEach((mhs) => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                        <td>${mhs.nim}</td>
+                        <td>${mhs.nama}</td>
+                        <td>${mhs.prodi}</td>
+                        <td>
+                            <button class="btn-warning" onclick="editData('${mhs.nim}', '${mhs.nama}', '${mhs.prodi}')">Edit</button>
+                            <button class="btn-danger" onclick="hapusData('${mhs.nim}')">Hapus</button>
+                        </td>
+                    `;
+            tbody.appendChild(tr);
+          });
+        } catch (err) {
+          console.error('Gagal memuat data:', err);
+        }
+      }
+
+      // Simpan Data (Tambah / Edit)
+      document
+        .getElementById('formMahasiswa')
+        .addEventListener('submit', async function (e) {
+          e.preventDefault();
+
+          const nim = document.getElementById('nim').value.trim();
+          const nama = document.getElementById('nama').value.trim();
+          const prodi = document.getElementById('prodi').value.trim();
+
+          if (!nim || !nama || !prodi) {
+            alert('Semua field wajib diisi!');
+            return;
+          }
+
+          const method = isEdit ? 'PUT' : 'POST';
+          const url = isEdit ? `/api/mahasiswa/${nim}` : '/api/mahasiswa';
+
+          try {
+            const response = await fetch(url, {
+              method: method,
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ nim, nama, prodi }),
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+              alert(result.error); // Menampilkan alert NIM duplikat / validasi error
+            } else {
+              resetForm();
+              loadData();
+            }
+          } catch (err) {
+            console.error('Gagal menyimpan data:', err);
+          }
+        });
+
+      // Set Form ke Mode Edit
+      function editData(nim, nama, prodi) {
+        isEdit = true;
+        document.getElementById('nim').value = nim;
+        document.getElementById('nim').readOnly = true; // NIM tidak boleh diubah
+        document.getElementById('nim').style.backgroundColor = '#f4f4f4';
+        document.getElementById('nama').value = nama;
+        document.getElementById('prodi').value = prodi;
+
+        document.getElementById('btnSimpan').innerText = 'Update Data';
+        document.getElementById('btnBatal').style.display = 'inline-block';
+      }
+
+      // Hapus Data
+      async function hapusData(nim) {
+        if (confirm(`Yakin ingin menghapus data dengan NIM ${nim}?`)) {
+          try {
+            await fetch(`/api/mahasiswa/${nim}`, { method: 'DELETE' });
+            loadData();
+          } catch (err) {
+            console.error('Gagal menghapus data:', err);
+          }
+        }
+      }
+
+      // Reset Form
+      function resetForm() {
+        isEdit = false;
+        document.getElementById('formMahasiswa').reset();
+        document.getElementById('nim').readOnly = false;
+        document.getElementById('nim').style.backgroundColor = '';
+
+        document.getElementById('btnSimpan').innerText = 'Simpan Data';
+        document.getElementById('btnBatal').style.display = 'none';
+      }
+    </script>
+  </body>
+</html>
