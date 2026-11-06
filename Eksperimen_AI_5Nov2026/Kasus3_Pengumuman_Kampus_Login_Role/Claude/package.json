@@ -1,0 +1,15 @@
+{
+  "name": "pengumuman-kampus",
+  "version": "1.0.0",
+  "description": "Aplikasi pengumuman kampus dengan Express, sql.js, express-session, dan bcryptjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "sql.js": "^1.12.0"
+  }
+}
