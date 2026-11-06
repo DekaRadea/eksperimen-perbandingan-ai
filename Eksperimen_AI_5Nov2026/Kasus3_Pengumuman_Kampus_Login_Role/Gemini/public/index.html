@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sistem Pengumuman Kampus</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        padding: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      h1,
+      h2 {
+        color: #333;
+      }
+      input,
+      textarea,
+      button {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      button {
+        background-color: #0056b3;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 4px;
+      }
+      button:hover {
+        background-color: #004494;
+      }
+      .announcement-card {
+        background: #e9ecef;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+      }
+      .announcement-card h3 {
+        margin-top: 0;
+      }
+      .delete-btn {
+        background-color: #dc3545;
+        width: auto;
+        padding: 5px 10px;
+        font-size: 12px;
+      }
+      .delete-btn:hover {
+        background-color: #c82333;
+      }
+      .hidden {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container" id="auth-section">
+      <h2>Login / Daftar</h2>
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <button onclick="login()">Login</button>
+      <button onclick="register()" style="background-color: #28a745">
+        Daftar Akun Baru (User)
+      </button>
+      <div id="auth-message" style="color: red; margin-top: 10px"></div>
+    </div>
+
+    <div class="container hidden" id="app-section">
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        "
+      >
+        <h2>Pengumuman Kampus</h2>
+        <button
+          onclick="logout()"
+          style="width: auto; background-color: #6c757d"
+        >
+          Logout
+        </button>
+      </div>
+
+      <div
+        id="admin-panel"
+        class="hidden"
+        style="
+          border: 1px solid #ccc;
+          padding: 15px;
+          margin-bottom: 20px;
+          border-radius: 5px;
+        "
+      >
+        <h3>Tambah Pengumuman Baru (Admin Panel)</h3>
+        <input type="text" id="title" placeholder="Judul Pengumuman" />
+        <textarea id="content" placeholder="Isi Pengumuman" rows="4"></textarea>
+        <button onclick="addAnnouncement()">Posting Pengumuman</button>
+      </div>
+
+      <div id="announcements-list"></div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', checkSession);
+
+      async function checkSession() {
+        const res = await fetch('/api/me');
+        const data = await res.json();
+
+        if (data.loggedIn) {
+          document.getElementById('auth-section').classList.add('hidden');
+          document.getElementById('app-section').classList.remove('hidden');
+
+          if (data.role === 'admin') {
+            document.getElementById('admin-panel').classList.remove('hidden');
+          } else {
+            document.getElementById('admin-panel').classList.add('hidden');
+          }
+          loadAnnouncements();
+        } else {
+          document.getElementById('auth-section').classList.remove('hidden');
+          document.getElementById('app-section').classList.add('hidden');
+        }
+      }
+
+      async function login() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const msg = document.getElementById('auth-message');
+
+        const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          msg.innerText = '';
+          document.getElementById('email').value = '';
+          document.getElementById('password').value = '';
+          checkSession();
+        } else {
+          msg.innerText = data.error;
+        }
+      }
+
+      async function register() {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const msg = document.getElementById('auth-message');
+
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          msg.style.color = 'green';
+          msg.innerText = 'Registrasi berhasil! Silakan login.';
+        } else {
+          msg.style.color = 'red';
+          msg.innerText = data.error;
+        }
+      }
+
+      async function logout() {
+        await fetch('/api/logout', { method: 'POST' });
+        checkSession();
+      }
+
+      async function loadAnnouncements() {
+        const res = await fetch('/api/announcements');
+        if (!res.ok) return;
+
+        const announcements = await res.json();
+        const meRes = await fetch('/api/me');
+        const me = await meRes.json();
+        const isAdmin = me.role === 'admin';
+
+        const list = document.getElementById('announcements-list');
+        list.innerHTML = '';
+
+        if (announcements.length === 0) {
+          list.innerHTML = '<p>Belum ada pengumuman.</p>';
+          return;
+        }
+
+        announcements.forEach((ann) => {
+          const card = document.createElement('div');
+          card.className = 'announcement-card';
+
+          let deleteBtnHtml = isAdmin
+            ? `<button class="delete-btn" onclick="deleteAnnouncement(${ann.id})">Hapus</button>`
+            : '';
+
+          card.innerHTML = `
+                <h3>${ann.title}</h3>
+                <p style="white-space: pre-wrap;">${ann.content}</p>
+                <small style="color: #666;">Diposting: ${new Date(
+                  ann.created_at
+                ).toLocaleString('id-ID')}</small>
+                ${deleteBtnHtml ? '<br><br>' + deleteBtnHtml : ''}
+            `;
+          list.appendChild(card);
+        });
+      }
+
+      async function addAnnouncement() {
+        const title = document.getElementById('title').value;
+        const content = document.getElementById('content').value;
+
+        if (!title || !content)
+          return alert('Judul dan isi tidak boleh kosong');
+
+        const res = await fetch('/api/announcements', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, content }),
+        });
+
+        if (res.ok) {
+          document.getElementById('title').value = '';
+          document.getElementById('content').value = '';
+          loadAnnouncements();
+        } else {
+          const data = await res.json();
+          alert(data.error);
+        }
+      }
+
+      async function deleteAnnouncement(id) {
+        if (!confirm('Yakin ingin menghapus pengumuman ini?')) return;
+
+        const res = await fetch(`/api/announcements/${id}`, {
+          method: 'DELETE',
+        });
+
+        if (res.ok) {
+          loadAnnouncements();
+        } else {
+          const data = await res.json();
+          alert(data.error);
+        }
+      }
+    </script>
+  </body>
+</html>
