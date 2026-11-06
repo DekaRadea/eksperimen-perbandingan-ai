@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KopiKita — Kedai Kopi</title>
+  <style>
+    :root {
+      --coklat-tua: #3e2723;
+      --coklat: #6d4c41;
+      --krem: #f5ebe0;
+      --krem-tua: #e3d5ca;
+      --aksen: #d4a373;
+      --putih: #ffffff;
+      --merah: #c62828;
+      --hijau: #2e7d32;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--krem);
+      color: var(--coklat-tua);
+      line-height: 1.6;
+    }
+
+    /* ===== NAVBAR ===== */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 70px;
+      background: var(--coklat-tua);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    .logo {
+      color: var(--aksen);
+      font-size: 1.6rem;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .nav-links { display: flex; list-style: none; gap: 30px; }
+
+    .nav-links a {
+      color: var(--krem);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover, .nav-links a.aktif { color: var(--aksen); }
+
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--krem);
+      font-size: 1.8rem;
+      cursor: pointer;
+    }
+
+    /* ===== HERO ===== */
+    #beranda {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 5% 60px;
+      background:
+        linear-gradient(rgba(62,39,35,0.75), rgba(62,39,35,0.75)),
+        radial-gradient(circle at 30% 40%, #8d6e63, #3e2723);
+      color: var(--krem);
+    }
+
+    #beranda h1 {
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      margin-bottom: 15px;
+    }
+
+    #beranda h1 span { color: var(--aksen); }
+
+    #beranda p {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+
+    .btn {
+      display: inline-block;
+      background: var(--aksen);
+      color: var(--coklat-tua);
+      padding: 14px 34px;
+      border: none;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-decoration: none;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    .btn:hover { background: var(--krem); transform: translateY(-3px); }
+
+    /* ===== SECTION UMUM ===== */
+    section { padding: 80px 5%; }
+
+    .judul-section {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .sub-judul {
+      text-align: center;
+      color: var(--coklat);
+      margin-bottom: 40px;
+    }
+
+    /* ===== MENU ===== */
+    .grid-menu {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 25px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .kartu {
+      background: var(--putih);
+      border-radius: 15px;
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .kartu:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .kartu .ikon { font-size: 3rem; margin-bottom: 10px; }
+    .kartu h3 { font-size: 1.25rem; margin-bottom: 5px; }
+    .kartu .harga { color: var(--coklat); font-weight: bold; font-size: 1.1rem; }
+
+    /* ===== KONTAK ===== */
+    #kontak { background: var(--krem-tua); }
+
+    form {
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--putih);
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .grup-input { margin-bottom: 20px; }
+
+    label { display: block; font-weight: 600; margin-bottom: 6px; }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--krem-tua);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+
+    input:focus, textarea:focus { outline: none; border-color: var(--aksen); }
+
+    textarea { resize: vertical; min-height: 120px; }
+
+    .error input, .error textarea { border-color: var(--merah); }
+
+    .pesan-error {
+      color: var(--merah);
+      font-size: 0.875rem;
+      margin-top: 5px;
+      min-height: 1.2em;
+    }
+
+    form .btn { width: 100%; }
+
+    .notifikasi {
+      display: none;
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #e8f5e9;
+      color: var(--hijau);
+      text-align: center;
+      font-weight: 600;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--coklat-tua);
+      color: var(--krem);
+      text-align: center;
+      padding: 25px 5%;
+    }
+
+    /* ===== RESPONSIF ===== */
+    @media (max-width: 900px) {
+      .grid-menu { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .hamburger { display: block; }
+
+      .nav-links {
+        position: absolute;
+        top: 70px; left: 0; right: 0;
+        flex-direction: column;
+        gap: 0;
+        background: var(--coklat-tua);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+      }
+
+      .nav-links.buka { max-height: 300px; }
+
+      .nav-links li { text-align: center; }
+
+      .nav-links a { display: block; padding: 15px; }
+
+      .grid-menu { grid-template-columns: 1fr; }
+
+      section { padding: 60px 5%; }
+
+      form { padding: 25px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a href="#beranda" class="logo">☕ KopiKita</a>
+    <button class="hamburger" id="hamburger" aria-label="Buka menu">☰</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#beranda" class="aktif">Beranda</a></li>
+      <li><a href="#menu">Menu</a></li>
+      <li><a href="#kontak">Kontak</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="beranda">
+    <div>
+      <h1>Selamat Datang di <span>KopiKita</span></h1>
+      <p>Racikan kopi Nusantara pilihan, diseduh dengan hati untuk menemani setiap cerita Anda.</p>
+      <a href="#menu" class="btn">Lihat Menu</a>
+    </div>
+  </section>
+
+  <!-- MENU -->
+  <section id="menu">
+    <h2 class="judul-section">Menu Kami</h2>
+    <p class="sub-judul">Pilihan minuman favorit pelanggan KopiKita</p>
+    <div class="grid-menu" id="gridMenu"></div>
+  </section>
+
+  <!-- KONTAK -->
+  <section id="kontak">
+    <h2 class="judul-section">Hubungi Kami</h2>
+    <p class="sub-judul">Punya pertanyaan atau saran? Kirimkan pesan Anda.</p>
+
+    <form id="formKontak" novalidate>
+      <div class="grup-input">
+        <label for="nama">Nama</label>
+        <input type="text" id="nama" placeholder="Masukkan nama Anda">
+        <div class="pesan-error" id="errorNama"></div>
+      </div>
+
+      <div class="grup-input">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="contoh@email.com">
+        <div class="pesan-error" id="errorEmail"></div>
+      </div>
+
+      <div class="grup-input">
+        <label for="pesan">Pesan</label>
+        <textarea id="pesan" placeholder="Tulis pesan Anda..."></textarea>
+        <div class="pesan-error" id="errorPesan"></div>
+      </div>
+
+      <button type="submit" class="btn">Kirim Pesan</button>
+      <div class="notifikasi" id="notifikasi"></div>
+    </form>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>&copy; 2026 KopiKita. Semua hak dilindungi.</p>
+  </footer>
+
+  <script>
+    // ===== DATA MENU =====
+    const daftarMenu = [
+      { ikon: "☕", nama: "Espresso",        harga: 18000 },
+      { ikon: "🥛", nama: "Cappuccino",      harga: 25000 },
+      { ikon: "🍶", nama: "Caffe Latte",     harga: 27000 },
+      { ikon: "🧋", nama: "Es Kopi Susu Aren", harga: 22000 },
+      { ikon: "🍫", nama: "Mocha",           harga: 28000 },
+      { ikon: "🫖", nama: "Kopi Tubruk",     harga: 15000 },
+      { ikon: "🍵", nama: "Matcha Latte",    harga: 30000 },
+      { ikon: "🧊", nama: "Cold Brew",       harga: 26000 }
+    ];
+
+    const formatRupiah = (angka) =>
+      "Rp " + angka.toLocaleString("id-ID");
+
+    const gridMenu = document.getElementById("gridMenu");
+    daftarMenu.forEach((item) => {
+      const kartu = document.createElement("div");
+      kartu.className = "kartu";
+      kartu.innerHTML = `
+        <div class="ikon">${item.ikon}</div>
+        <h3>${item.nama}</h3>
+        <p class="harga">${formatRupiah(item.harga)}</p>
+      `;
+      gridMenu.appendChild(kartu);
+    });
+
+    // ===== NAVBAR: HAMBURGER =====
+    const hamburger = document.getElementById("hamburger");
+    const navLinks = document.getElementById("navLinks");
+
+    hamburger.addEventListener("click", () => {
+      navLinks.classList.toggle("buka");
+    });
+
+    // Tutup menu HP setelah link diklik
+    document.querySelectorAll(".nav-links a").forEach((link) => {
+      link.addEventListener("click", () => navLinks.classList.remove("buka"));
+    });
+
+    // ===== NAVBAR: TANDAI SECTION AKTIF SAAT MENGGULIR =====
+    const sections = document.querySelectorAll("section[id]");
+    window.addEventListener("scroll", () => {
+      let aktif = "beranda";
+      sections.forEach((sec) => {
+        if (window.scrollY >= sec.offsetTop - 100) aktif = sec.id;
+      });
+      document.querySelectorAll(".nav-links a").forEach((a) => {
+        a.classList.toggle("aktif", a.getAttribute("href") === "#" + aktif);
+      });
+    });
+
+    // ===== VALIDASI FORM =====
+    const form = document.getElementById("formKontak");
+    const polaEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    function setError(input, idError, pesan) {
+      input.parentElement.classList.toggle("error", pesan !== "");
+      document.getElementById(idError).textContent = pesan;
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const nama = document.getElementById("nama");
+      const email = document.getElementById("email");
+      const pesan = document.getElementById("pesan");
+      let valid = true;
+
+      // Nama
+      if (nama.value.trim() === "") {
+        setError(nama, "errorNama", "Nama wajib diisi.");
+        valid = false;
+      } else {
+        setError(nama, "errorNama", "");
+      }
+
+      // Email
+      if (email.value.trim() === "") {
+        setError(email, "errorEmail", "Email wajib diisi.");
+        valid = false;
+      } else if (!polaEmail.test(email.value.trim())) {
+        setError(email, "errorEmail", "Format email tidak valid (contoh: nama@email.com).");
+        valid = false;
+      } else {
+        setError(email, "errorEmail", "");
+      }
+
+      // Pesan
+      if (pesan.value.trim() === "") {
+        setError(pesan, "errorPesan", "Pesan wajib diisi.");
+        valid = false;
+      } else {
+        setError(pesan, "errorPesan", "");
+      }
+
+      const notifikasi = document.getElementById("notifikasi");
+      if (valid) {
+        notifikasi.textContent = `Terima kasih, ${nama.value.trim()}! Pesan Anda berhasil dikirim.`;
+        notifikasi.style.display = "block";
+        form.reset();
+        setTimeout(() => (notifikasi.style.display = "none"), 4000);
+      } else {
+        notifikasi.style.display = "none";
+      }
+    });
+  </script>
+</body>
+</html>
