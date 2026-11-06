@@ -1,0 +1,18 @@
+DAFTAR PROYEK EKSPERIMEN PERBANDINGAN AI (5 November 2026)
+Struktur: <Kasus>/<AI>/<file proyek>
+
+Kasus | AI | Kode proyek StackBlitz | Dasar pencocokan
+Kasus1_KopiKita_LandingPage | Claude  | web-platform-79bwqhwd | <title> "KopiKita — Kedai Kopi" (disalin dari artifact Claude)
+Kasus1_KopiKita_LandingPage | ChatGPT | web-platform-4paccief | <title> "KopiKita - Teman Terbaik Setiap Hari" (disalin dari ChatGPT)
+Kasus1_KopiKita_LandingPage | Gemini  | web-platform-3qpstygn | <title> "KopiKita - Nikmati Sensasi Kopi Asli" (disalin dari Gemini)
+Kasus2_Data_Mahasiswa_CRUD | Claude  | node-guiqiipy | placeholder "contoh: 2401234", fungsi escapeHtml/validateForm
+Kasus2_Data_Mahasiswa_CRUD | ChatGPT | node-sljw6psk | h1 "🎓 Data Mahasiswa", fungsi editData/deleteData
+Kasus2_Data_Mahasiswa_CRUD | Gemini  | node-f9kfng5w | placeholder "Masukkan Nama", fungsi hapusData
+Kasus3_Pengumuman_Kampus_Login_Role | Claude  | node-al66qax3 | h1 "📢 Pengumuman Kampus", fungsi setMsg/render
+Kasus3_Pengumuman_Kampus_Login_Role | ChatGPT | node-5x6idw1x | h1 "🎓 Pengumuman Kampus", fungsi showLogin/showRegister/showDashboard
+Kasus3_Pengumuman_Kampus_Login_Role | Gemini  | node-dudpqrbf | <title> "Sistem Pengumuman Kampus", fungsi addAnnouncement
+
+Catatan:
+- Kasus 1: file yang relevan adalah index.html. script.js, page2.html, styles.css adalah file bawaan template StackBlitz Static (tidak dipakai).
+- Kasus 2 & 3: kode utama ada di server.js dan public/index.html. index.js adalah file bawaan template Node.js.
+- node_modules tidak disertakan; jalankan "npm install" lalu "npm start".
