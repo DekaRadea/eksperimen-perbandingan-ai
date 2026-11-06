@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pengumuman Kampus</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        background: #f3f5f9;
+        color: #1f2937;
+      }
+      header {
+        background: #1e3a8a;
+        color: #fff;
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 1.3rem;
+      }
+      main {
+        max-width: 860px;
+        margin: 24px auto;
+        padding: 0 16px;
+      }
+      .card {
+        background: #fff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+      @media (max-width: 640px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      h2 {
+        margin-top: 0;
+        font-size: 1.1rem;
+      }
+      label {
+        display: block;
+        font-size: 0.9rem;
+        margin: 10px 0 4px;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 9px 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font: inherit;
+      }
+      textarea {
+        min-height: 110px;
+        resize: vertical;
+      }
+      button {
+        margin-top: 14px;
+        padding: 9px 16px;
+        border: 0;
+        border-radius: 6px;
+        background: #2563eb;
+        color: #fff;
+        font: inherit;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #1d4ed8;
+      }
+      button.danger {
+        background: #dc2626;
+        margin-top: 10px;
+      }
+      button.danger:hover {
+        background: #b91c1c;
+      }
+      button.light {
+        background: #fff;
+        color: #1e3a8a;
+        margin-top: 0;
+      }
+      .msg {
+        margin-top: 10px;
+        font-size: 0.9rem;
+        min-height: 1.2em;
+      }
+      .msg.error {
+        color: #dc2626;
+      }
+      .msg.ok {
+        color: #16a34a;
+      }
+      .announcement {
+        border-bottom: 1px solid #e5e7eb;
+        padding: 14px 0;
+      }
+      .announcement:last-child {
+        border-bottom: 0;
+      }
+      .announcement h3 {
+        margin: 0 0 4px;
+        font-size: 1.05rem;
+      }
+      .meta {
+        font-size: 0.8rem;
+        color: #6b7280;
+        margin-bottom: 8px;
+      }
+      .content {
+        white-space: pre-wrap;
+        margin: 0;
+      }
+      .badge {
+        display: inline-block;
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: #fbbf24;
+        color: #1f2937;
+        margin-left: 6px;
+      }
+      .hidden {
+        display: none !important;
+      }
+      .empty {
+        color: #6b7280;
+        font-style: italic;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>📢 Pengumuman Kampus</h1>
+      <div id="userBox" class="hidden">
+        <span id="userInfo"></span>
+        <button id="logoutBtn" class="light">Logout</button>
+      </div>
+    </header>
+
+    <main>
+      <!-- Bagian login & registrasi -->
+      <section id="authSection" class="grid">
+        <div class="card">
+          <h2>Login</h2>
+          <form id="loginForm">
+            <label for="loginEmail">Email</label>
+            <input
+              id="loginEmail"
+              type="email"
+              required
+              autocomplete="username"
+            />
+            <label for="loginPassword">Password</label>
+            <input
+              id="loginPassword"
+              type="password"
+              required
+              autocomplete="current-password"
+            />
+            <button type="submit">Login</button>
+            <div id="loginMsg" class="msg"></div>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Registrasi</h2>
+          <form id="registerForm">
+            <label for="regName">Nama</label>
+            <input id="regName" type="text" required maxlength="100" />
+            <label for="regEmail">Email</label>
+            <input
+              id="regEmail"
+              type="email"
+              required
+              autocomplete="username"
+            />
+            <label for="regPassword">Password (min. 8 karakter)</label>
+            <input
+              id="regPassword"
+              type="password"
+              required
+              minlength="8"
+              maxlength="72"
+              autocomplete="new-password"
+            />
+            <button type="submit">Daftar</button>
+            <div id="registerMsg" class="msg"></div>
+          </form>
+        </div>
+      </section>
+
+      <!-- Bagian setelah login -->
+      <section id="appSection" class="hidden">
+        <div id="adminPanel" class="card hidden">
+          <h2>Tambah Pengumuman</h2>
+          <form id="annForm">
+            <label for="annTitle">Judul</label>
+            <input id="annTitle" type="text" required maxlength="200" />
+            <label for="annContent">Isi</label>
+            <textarea id="annContent" required maxlength="5000"></textarea>
+            <button type="submit">Simpan</button>
+            <div id="annMsg" class="msg"></div>
+          </form>
+        </div>
+
+        <div class="card">
+          <h2>Daftar Pengumuman</h2>
+          <div id="listMsg" class="msg"></div>
+          <div id="announcementList"></div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      let currentUser = null;
+
+      const $ = (id) => document.getElementById(id);
+
+      async function api(url, options = {}) {
+        const res = await fetch(url, {
+          credentials: 'same-origin',
+          headers: { 'Content-Type': 'application/json' },
+          ...options,
+        });
+        let data = {};
+        try {
+          data = await res.json();
+        } catch (_) {}
+        if (!res.ok) throw new Error(data.error || 'Terjadi kesalahan.');
+        return data;
+      }
+
+      function setMsg(el, text, type) {
+        el.textContent = text;
+        el.className = 'msg ' + (type || '');
+      }
+
+      function render() {
+        const loggedIn = !!currentUser;
+        $('authSection').classList.toggle('hidden', loggedIn);
+        $('appSection').classList.toggle('hidden', !loggedIn);
+        $('userBox').classList.toggle('hidden', !loggedIn);
+
+        if (loggedIn) {
+          const info = $('userInfo');
+          info.textContent = currentUser.name + ' (' + currentUser.email + ')';
+          if (currentUser.role === 'admin') {
+            const badge = document.createElement('span');
+            badge.className = 'badge';
+            badge.textContent = 'admin';
+            info.appendChild(badge);
+          }
+          // Panel admin hanya ditampilkan untuk admin.
+          // Keamanan sebenarnya tetap dijaga di server (requireAdmin).
+          $('adminPanel').classList.toggle(
+            'hidden',
+            currentUser.role !== 'admin'
+          );
+          loadAnnouncements();
+        }
+      }
+
+      async function loadAnnouncements() {
+        const list = $('announcementList');
+        list.replaceChildren();
+        setMsg($('listMsg'), '');
+        try {
+          const { announcements } = await api('/api/announcements');
+          if (announcements.length === 0) {
+            const p = document.createElement('p');
+            p.className = 'empty';
+            p.textContent = 'Belum ada pengumuman.';
+            list.appendChild(p);
+            return;
+          }
+          for (const a of announcements) {
+            const item = document.createElement('div');
+            item.className = 'announcement';
+
+            const h3 = document.createElement('h3');
+            h3.textContent = a.title;
+
+            const meta = document.createElement('div');
+            meta.className = 'meta';
+            meta.textContent =
+              'Oleh ' + a.author + ' • ' + a.created_at + ' UTC';
+
+            const content = document.createElement('p');
+            content.className = 'content';
+            content.textContent = a.content;
+
+            item.append(h3, meta, content);
+
+            if (currentUser && currentUser.role === 'admin') {
+              const del = document.createElement('button');
+              del.className = 'danger';
+              del.textContent = 'Hapus';
+              del.addEventListener('click', () =>
+                deleteAnnouncement(a.id, a.title)
+              );
+              item.appendChild(del);
+            }
+            list.appendChild(item);
+          }
+        } catch (err) {
+          setMsg($('listMsg'), err.message, 'error');
+        }
+      }
+
+      async function deleteAnnouncement(id, title) {
+        if (!confirm('Hapus pengumuman "' + title + '"?')) return;
+        try {
+          await api('/api/announcements/' + encodeURIComponent(id), {
+            method: 'DELETE',
+          });
+          loadAnnouncements();
+        } catch (err) {
+          setMsg($('listMsg'), err.message, 'error');
+        }
+      }
+
+      $('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        setMsg($('loginMsg'), '');
+        try {
+          const { user } = await api('/api/login', {
+            method: 'POST',
+            body: JSON.stringify({
+              email: $('loginEmail').value,
+              password: $('loginPassword').value,
+            }),
+          });
+          currentUser = user;
+          e.target.reset();
+          render();
+        } catch (err) {
+          setMsg($('loginMsg'), err.message, 'error');
+        }
+      });
+
+      $('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        setMsg($('registerMsg'), '');
+        try {
+          const data = await api('/api/register', {
+            method: 'POST',
+            body: JSON.stringify({
+              name: $('regName').value,
+              email: $('regEmail').value,
+              password: $('regPassword').value,
+            }),
+          });
+          setMsg($('registerMsg'), data.message, 'ok');
+          e.target.reset();
+        } catch (err) {
+          setMsg($('registerMsg'), err.message, 'error');
+        }
+      });
+
+      $('annForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        setMsg($('annMsg'), '');
+        try {
+          const data = await api('/api/announcements', {
+            method: 'POST',
+            body: JSON.stringify({
+              title: $('annTitle').value,
+              content: $('annContent').value,
+            }),
+          });
+          setMsg($('annMsg'), data.message, 'ok');
+          e.target.reset();
+          loadAnnouncements();
+        } catch (err) {
+          setMsg($('annMsg'), err.message, 'error');
+        }
+      });
+
+      $('logoutBtn').addEventListener('click', async () => {
+        try {
+          await api('/api/logout', { method: 'POST' });
+        } catch (_) {}
+        currentUser = null;
+        render();
+      });
+
+      // Cek sesi saat halaman dibuka
+      (async () => {
+        try {
+          const { user } = await api('/api/me');
+          currentUser = user;
+        } catch (_) {
+          currentUser = null;
+        }
+        render();
+      })();
+    </script>
+  </body>
+</html>
