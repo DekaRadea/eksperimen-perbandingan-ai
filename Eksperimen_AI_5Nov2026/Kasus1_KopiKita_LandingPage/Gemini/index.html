@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KopiKita - Nikmati Sensasi Kopi Asli</title>
+    <style>
+        /* CSS Reset & Variables */
+        :root {
+            --primary-color: #4e342e; /* Cokelat tua */
+            --secondary-color: #8d6e63; /* Cokelat muda */
+            --accent-color: #d7ccc8; /* Krem */
+            --text-color: #333333;
+            --bg-color: #f9f9f9;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Navbar */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background-color: var(--primary-color);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        nav .logo {
+            color: var(--white);
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav ul li a {
+            color: var(--white);
+            text-decoration: none;
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Hero Section */
+        #beranda {
+            height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), 
+                        url('https://images.unsplash.com/photo-1497935586351-b67a49e012bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--white);
+            padding: 0 20px;
+        }
+
+        #beranda h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        #beranda p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            max-width: 600px;
+        }
+
+        .btn-pesan {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--secondary-color);
+            color: var(--white);
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.2s;
+        }
+
+        .btn-pesan:hover {
+            background-color: var(--primary-color);
+            transform: scale(1.05);
+        }
+
+        /* Sections Layout */
+        section {
+            padding: 80px 5%;
+            min-height: 100vh;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+        }
+
+        /* Menu Section */
+        #menu {
+            background-color: var(--bg-color);
+        }
+
+        .menu-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .menu-card {
+            background-color: var(--white);
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            text-align: center;
+            transition: transform 0.3s ease;
+            border-bottom: 5px solid var(--secondary-color);
+        }
+
+        .menu-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .menu-card h3 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .menu-card .harga {
+            font-size: 1.3rem;
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+
+        /* Contact Section */
+        #kontak {
+            background-color: var(--accent-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .contact-form {
+            background-color: var(--white);
+            padding: 2.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .form-group input, 
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 150px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-submit:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .pesan-error {
+            color: #d32f2f;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--text-color);
+            color: var(--white);
+            text-align: center;
+            padding: 1.5rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            nav {
+                flex-direction: column;
+                padding: 1rem;
+            }
+            
+            nav ul {
+                margin-top: 1rem;
+                gap: 1.5rem;
+            }
+            
+            #beranda h1 {
+                font-size: 2.5rem;
+            }
+            
+            section {
+                padding: 120px 5% 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <a href="#beranda" class="logo">KopiKita</a>
+        <ul>
+            <li><a href="#beranda">Beranda</a></li>
+            <li><a href="#menu">Menu</a></li>
+            <li><a href="#kontak">Kontak</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="beranda">
+        <h1>Awali Harimu dengan KopiKita</h1>
+        <p>Biji kopi pilihan terbaik yang diseduh dengan penuh cinta untuk menemani setiap aktivitasmu.</p>
+        <a href="#menu" class="btn-pesan">Lihat Menu Kami</a>
+    </section>
+
+    <!-- Menu Section -->
+    <section id="menu">
+        <h2 class="section-title">Menu Favorit</h2>
+        <div class="menu-container">
+            <div class="menu-card">
+                <h3>Espresso Single Origin</h3>
+                <p class="harga">Rp 20.000</p>
+            </div>
+            <div class="menu-card">
+                <h3>Caffè Americano</h3>
+                <p class="harga">Rp 22.000</p>
+            </div>
+            <div class="menu-card">
+                <h3>Kopi Susu Aren</h3>
+                <p class="harga">Rp 25.000</p>
+            </div>
+            <div class="menu-card">
+                <h3>Classic Cappuccino</h3>
+                <p class="harga">Rp 28.000</p>
+            </div>
+            <div class="menu-card">
+                <h3>Caramel Macchiato</h3>
+                <p class="harga">Rp 32.000</p>
+            </div>
+            <div class="menu-card">
+                <h3>Matcha Latte</h3>
+                <p class="harga">Rp 30.000</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Kontak Section -->
+    <section id="kontak">
+        <h2 class="section-title">Hubungi Kami</h2>
+        <form class="contact-form" id="formKontak">
+            <div class="form-group">
+                <label for="nama">Nama Lengkap</label>
+                <input type="text" id="nama" placeholder="Masukkan nama Anda">
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="text" id="email" placeholder="contoh@email.com">
+            </div>
+            <div class="form-group">
+                <label for="pesan">Pesan</label>
+                <textarea id="pesan" placeholder="Tuliskan pesan atau pertanyaan Anda di sini..."></textarea>
+            </div>
+            <div class="pesan-error" id="errorMsg"></div>
+            <button type="submit" class="btn-submit">Kirim Pesan</button>
+        </form>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 KopiKita. Dibuat dengan sepenuh hati.</p>
+    </footer>
+
+    <!-- JavaScript murni -->
+    <script>
+        document.getElementById('formKontak').addEventListener('submit', function(event) {
+            event.preventDefault(); // Mencegah form melakukan refresh halaman
+
+            // Mengambil nilai input dan menghapus spasi berlebih
+            const nama = document.getElementById('nama').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const pesan = document.getElementById('pesan').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+
+            // Regex untuk validasi format email dasar
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            // Reset pesan error
+            errorMsg.style.display = 'none';
+            errorMsg.innerHTML = '';
+
+            // Validasi wajib isi
+            if (!nama || !email || !pesan) {
+                errorMsg.innerHTML = 'Semua kolom (Nama, Email, Pesan) wajib diisi.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            // Validasi format email
+            if (!emailRegex.test(email)) {
+                errorMsg.innerHTML = 'Format email tidak valid. Pastikan mengandung "@" dan domain.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            // Jika lolos semua validasi
+            alert(`Terima kasih, ${nama}! Pesan Anda berhasil dikirim.`);
+            
+            // Reset form kembali kosong
+            this.reset();
+        });
+    </script>
+</body>
+</html>
